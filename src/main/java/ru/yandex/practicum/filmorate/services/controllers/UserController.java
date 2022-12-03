@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,11 +25,10 @@ public class UserController {
 
     @PostMapping("/users")
     public User createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors() || user.getBirthday().isAfter(LocalDate.now())) {
-            log.info("Недопустимые поля для пользователя!");
-            throw new ValidationException("Недопустимые поля для пользователя!");
+        if (bindingResult.hasErrors()) {
+            log.info("Недопустимые значения полей");
+            throw new ValidationException("Недопустимые значения полей");
         }
-
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
@@ -44,9 +42,9 @@ public class UserController {
 
     @PutMapping("/users")
     public User updateUser(@Valid @RequestBody User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors() || user.getBirthday().isAfter(LocalDate.now())) {
-            log.info("Недопустимые поля для пользователя!");
-            throw new ValidationException("Недопустимые поля для пользователя!");
+        if (bindingResult.hasErrors()) {
+            log.info("Недопустимые значения полей");
+            throw new ValidationException("Недопустимые значения полей");
         }
 
         if (user.getName() == null) {

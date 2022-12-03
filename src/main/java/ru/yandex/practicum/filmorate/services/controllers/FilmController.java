@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +26,9 @@ public class FilmController {
 
     @PostMapping("/films")
     public Film createFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
-        if (bindingResult.hasErrors() || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))){
-            log.info("Недопустимые поля для фильма!");
-            throw new ValidationException("Недопустимые поля для фильма!");
+        if (bindingResult.hasErrors() || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            log.info("Недопустимые значения полей");
+            throw new ValidationException("Недопустимые значения полей");
         }
 
         film.setId(id);
@@ -42,8 +41,8 @@ public class FilmController {
     @PutMapping("/films")
     public Film updateFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
         if (bindingResult.hasErrors() || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.info("Недопустимые поля для фильма!");
-            throw new ValidationException("Недопустимые поля для фильма!");
+            log.info("Недопустимые значения полей");
+            throw new ValidationException("Недопустимые значения полей");
         }
 
         if (films.containsKey(film.getId())) {
