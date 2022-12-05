@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.services.controllers;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -16,8 +17,8 @@ import java.util.Map;
 @RestController
 @Slf4j
 public class FilmController {
-    final Map<Integer, Film> films = new HashMap<>();
-    int id = 1;
+    private final Map<Integer, Film> films = new HashMap<>();
+    private int id = 1;
 
     @GetMapping("/films")
     public List<Film> allFilms() {
@@ -27,7 +28,14 @@ public class FilmController {
     @PostMapping("/films")
     public Film createFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
         if (bindingResult.hasErrors() || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.info("Недопустимые значения полей");
+
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            List<String> message = new ArrayList<>();
+            for (FieldError e : errors) {
+                message.add("@" + e.getField().toUpperCase() + " : " + e.getDefaultMessage() + "\n");
+            }
+
+            log.info("Недопустимые значения полей: " + message);
             throw new ValidationException("Недопустимые значения полей");
         }
 
@@ -41,7 +49,14 @@ public class FilmController {
     @PutMapping("/films")
     public Film updateFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
         if (bindingResult.hasErrors() || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.info("Недопустимые значения полей");
+
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            List<String> message = new ArrayList<>();
+            for (FieldError e : errors) {
+                message.add("@" + e.getField().toUpperCase() + " : " + e.getDefaultMessage() + "\n");
+            }
+
+            log.info("Недопустимые значения полей: " + message);
             throw new ValidationException("Недопустимые значения полей");
         }
 

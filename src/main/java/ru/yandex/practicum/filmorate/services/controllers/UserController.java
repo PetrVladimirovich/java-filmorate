@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.services.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -15,8 +16,8 @@ import java.util.Map;
 @RestController
 @Slf4j
 public class UserController {
-    final Map<Integer, User> users = new HashMap<>();
-    int id = 1;
+    private final Map<Integer, User> users = new HashMap<>();
+    private int id = 1;
 
     @GetMapping("/users")
     public List<User> allUsers() {
@@ -26,7 +27,13 @@ public class UserController {
     @PostMapping("/users")
     public User createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            log.info("Недопустимые значения полей");
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            List<String> message = new ArrayList<>();
+            for (FieldError e : errors) {
+                message.add("@" + e.getField().toUpperCase() + " : " + e.getDefaultMessage() + "\n");
+            }
+
+            log.info("Недопустимые значения полей : " + message);
             throw new ValidationException("Недопустимые значения полей");
         }
         if (user.getName() == null) {
@@ -43,7 +50,13 @@ public class UserController {
     @PutMapping("/users")
     public User updateUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            log.info("Недопустимые значения полей");
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            List<String> message = new ArrayList<>();
+            for (FieldError e : errors) {
+                message.add("@" + e.getField().toUpperCase() + " : " + e.getDefaultMessage() + "\n");
+            }
+
+            log.info("Недопустимые значения полей : " + message);
             throw new ValidationException("Недопустимые значения полей");
         }
 
