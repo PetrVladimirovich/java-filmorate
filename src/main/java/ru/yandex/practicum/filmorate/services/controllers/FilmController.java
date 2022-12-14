@@ -27,7 +27,7 @@ public class FilmController {
 
     @PostMapping("/films")
     public Film createFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
-        if (bindingResult.hasErrors() || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (bindingResult.hasErrors()) {
 
             List<FieldError> errors = bindingResult.getFieldErrors();
             List<String> message = new ArrayList<>();
@@ -48,7 +48,7 @@ public class FilmController {
 
     @PutMapping("/films")
     public Film updateFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
-        if (bindingResult.hasErrors() || film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (bindingResult.hasErrors()) {
 
             List<FieldError> errors = bindingResult.getFieldErrors();
             List<String> message = new ArrayList<>();
