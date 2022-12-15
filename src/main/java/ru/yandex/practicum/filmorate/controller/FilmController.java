@@ -1,31 +1,52 @@
-package ru.yandex.practicum.filmorate.services.controllers;
+package ru.yandex.practicum.filmorate.controller;
 
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @RestController
 @Slf4j
+@RequestMapping("/films")
 public class FilmController {
-    private final Map<Integer, Film> films = new HashMap<>();
-    private int id = 1;
 
-    @GetMapping("/films")
-    public List<Film> allFilms() {
-        return new ArrayList<Film>(films.values());
+    private final FilmService filmService;
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
-    @PostMapping("/films")
+    @GetMapping
+    public List<Film> allFilms() {
+        return filmService.allFilms();
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable int id) {
+        if (filmService.getFilmById(id) == null) {
+            throw new NotFoundException("Фильм не найден в базе");
+        }
+        return filmService.getFilmById(id);
+    }
+
+    @GetMapping("/popular")
+    public Set<Film> getPopular(@RequestParam(defaultValue = "10", required = false) int count) {
+        log.info("Самые популярные {} фильмы в базе: {}", count, filmService.getBestFilms(count));
+        return filmService.getBestFilms(count);
+    }
+
+    @PostMapping
     public Film createFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
 
@@ -39,14 +60,10 @@ public class FilmController {
             throw new ValidationException("Недопустимые значения полей");
         }
 
-        film.setId(id);
-        films.put(id++, film);
-        log.info("Фильм добавлен! Ему присвоен id: '{}'", film.getId());
-
-        return film;
+        return filmService.createFilm(film);
     }
 
-    @PutMapping("/films")
+    @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
 
@@ -60,14 +77,18 @@ public class FilmController {
             throw new ValidationException("Недопустимые значения полей");
         }
 
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            log.info("Фильм с данным id: '{}', изменён!", film.getId());
+        return filmService.updateFilm(film);
+    }
 
-            return film;
-        }
+    @PutMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void addLike(@PathVariable int id, @PathVariable int userId) {
+        filmService.addLike(userId, id);
+    }
 
-        log.info("Фильма с данным id: '{}' нету в базе!", film.getId());
-        throw new ValidationException("Нету такого фильма");
+    @DeleteMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
+        filmService.deleteLike(userId, id);
     }
 }
