@@ -1,30 +1,26 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static ru.yandex.practicum.filmorate.Constants.requestBodyValidationLogs;
+
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     public List<User> allUsers() {
@@ -56,32 +52,16 @@ public class UserController {
     @PostMapping
     public User createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            List<String> message = new ArrayList<>();
-            for (FieldError e : errors) {
-                message.add("@" + e.getField().toUpperCase() + " : " + e.getDefaultMessage() + "\n");
-            }
-
-            log.info("Недопустимые значения полей : " + message);
-            throw new ValidationException("Недопустимые значения полей");
+            requestBodyValidationLogs(bindingResult);
         }
-
         return userService.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            List<String> message = new ArrayList<>();
-            for (FieldError e : errors) {
-                message.add("@" + e.getField().toUpperCase() + " : " + e.getDefaultMessage() + "\n");
-            }
-
-            log.info("Недопустимые значения полей : " + message);
-            throw new ValidationException("Недопустимые значения полей");
+            requestBodyValidationLogs(bindingResult);
         }
-
         return userService.updateUser(user);
     }
 

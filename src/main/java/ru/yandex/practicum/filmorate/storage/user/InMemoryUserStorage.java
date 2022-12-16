@@ -39,7 +39,7 @@ public class InMemoryUserStorage implements UserStorage {
             users.put(user.getId(), user);
             log.info("В хранилище обновлён пользователь '{}' с id: '{}'", user.getName(), user.getId());
         }else {
-            log.info("В хранилище не было пользователя '{}' с id: '{}'", user.getName(), user.getId());
+            log.error("В хранилище не было пользователя '{}' с id: '{}'", user.getName(), user.getId());
             throw new NotFoundException("Такого пользователя нету!");
         }
     }

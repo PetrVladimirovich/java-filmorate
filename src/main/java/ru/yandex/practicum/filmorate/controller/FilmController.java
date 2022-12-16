@@ -1,31 +1,27 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import javax.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static ru.yandex.practicum.filmorate.Constants.requestBodyValidationLogs;
+
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
 
     private final FilmService filmService;
-    @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
 
     @GetMapping
     public List<Film> allFilms() {
@@ -49,34 +45,16 @@ public class FilmController {
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            List<String> message = new ArrayList<>();
-            for (FieldError e : errors) {
-                message.add("@" + e.getField().toUpperCase() + " : " + e.getDefaultMessage() + "\n");
-            }
-
-            log.info("Недопустимые значения полей: " + message);
-            throw new ValidationException("Недопустимые значения полей");
+            requestBodyValidationLogs(bindingResult);
         }
-
         return filmService.createFilm(film);
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            List<String> message = new ArrayList<>();
-            for (FieldError e : errors) {
-                message.add("@" + e.getField().toUpperCase() + " : " + e.getDefaultMessage() + "\n");
-            }
-
-            log.info("Недопустимые значения полей: " + message);
-            throw new ValidationException("Недопустимые значения полей");
+            requestBodyValidationLogs(bindingResult);
         }
-
         return filmService.updateFilm(film);
     }
 
