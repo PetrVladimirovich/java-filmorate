@@ -42,3 +42,4 @@ SELECT *
 FROM film
 WHERE id = filmId;
 ```
+Работа выполнена отлично, всё прописано)
