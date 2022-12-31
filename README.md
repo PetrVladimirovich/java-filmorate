@@ -42,4 +42,3 @@ SELECT *
 FROM film
 WHERE id = filmId;
 ```
-
