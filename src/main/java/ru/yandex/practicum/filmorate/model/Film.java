@@ -31,6 +31,8 @@ public class Film {
 
     @Positive(message = "duration не может быть отрицательным.")
     private final int duration;
+    private Set<Genre> genres;
+    private Mpa mpa;
 
     public void addLike(Integer userId) {
         likes.add(Long.valueOf(userId));
