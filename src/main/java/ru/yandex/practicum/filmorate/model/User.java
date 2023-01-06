@@ -1,5 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
-
+//тестовый коментарий
 import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
