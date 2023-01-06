@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.service.User;
+import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.*;
 import java.time.LocalDate;
