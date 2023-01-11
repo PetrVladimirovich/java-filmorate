@@ -14,23 +14,22 @@ import java.util.Set;
 
 
 @Data
-@Builder
 public class Film {
-    private final Set<Long> likes = new HashSet<>();
+    private Set<Long> likes;
     private int id;
 
     @NotEmpty(message = "name не может быть пустым.")
-    private final String name;
+    private String name;
 
     @Size(max = 200, message = "description не может быть длиннее 200 символов.")
-    private final String description;
+    private String description;
 
     @NotNull(message = "Дата релиза обязательна!")
     @MinDate(date = FILM_BIRTHDAY)
-    private final LocalDate releaseDate;
+    private LocalDate releaseDate;
 
     @Positive(message = "duration не может быть отрицательным.")
-    private final int duration;
+    private int duration;
     private Set<Genre> genres;
     private Mpa mpa;
 
