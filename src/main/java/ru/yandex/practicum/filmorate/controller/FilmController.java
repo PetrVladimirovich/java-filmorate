@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+
 import java.util.List;
 import java.util.Set;
 
@@ -22,24 +24,26 @@ import static ru.yandex.practicum.filmorate.Constants.requestBodyValidationLogs;
 public class FilmController {
 
     private final FilmService filmService;
+    private final FilmStorage filmStorage;
 
     @GetMapping
     public List<Film> allFilms() {
-        return filmService.allFilms();
+        return filmStorage.allFilms();
     }
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable int id) {
-        if (filmService.getFilmById(id) == null) {
-            throw new NotFoundException("Фильм не найден в базе");
+        if (filmStorage.getFilmById(id).isEmpty()) {
+            throw new NotFoundException("Фильм не найден в базе!");
         }
-        return filmService.getFilmById(id);
+        return filmStorage.getFilmById(id).orElse(null);
     }
 
     @GetMapping("/popular")
     public Set<Film> getPopular(@RequestParam(defaultValue = "10", required = false) int count) {
-        log.info("Самые популярные {} фильмы в базе: {}", count, filmService.getBestFilms(count));
-        return filmService.getBestFilms(count);
+        Set<Film> bestFilms = filmService.getBestFilms(count);
+        log.info("Самые популярные(х) {} фильмы в базе: {}", count, bestFilms);
+        return bestFilms;
     }
 
     @PostMapping
@@ -47,7 +51,7 @@ public class FilmController {
         if (bindingResult.hasErrors()) {
             requestBodyValidationLogs(bindingResult);
         }
-        return filmService.createFilm(film);
+        return filmStorage.add(film);
     }
 
     @PutMapping
@@ -55,11 +59,10 @@ public class FilmController {
         if (bindingResult.hasErrors()) {
             requestBodyValidationLogs(bindingResult);
         }
-        return filmService.updateFilm(film);
+        return filmStorage.update(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    @ResponseStatus(HttpStatus.OK)
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         filmService.addLike(userId, id);
     }

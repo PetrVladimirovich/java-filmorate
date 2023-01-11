@@ -1,31 +1,30 @@
 package ru.yandex.practicum.filmorate.model;
-//тестовый коментарий
+
 import lombok.Builder;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.annotation.NoSpace;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Builder
 public class User {
-    private final Set<Long> friends = new HashSet<>();
+    private Set<Long> friends;
     private int id;
 
     @Email(message = "Неверный формат Email.")
     @NotEmpty(message = "email не может быть пустым.")
-    private final String email;
+    private String email;
 
-    @NotBlank(message = "login не может содержать пробелы.")
+    @NoSpace
     @NotEmpty(message = "login не может быть пустым.")
-    private final String login;
+    private String login;
     private String name;
 
     @Past(message = "birthday не может быть позже текущей даты.")
-    private final LocalDate birthday;
+    private LocalDate birthday;
 
     public void addFriend(Integer userId) {
         friends.add(Long.valueOf(userId));
