@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class UserFriendsServiceInMemory implements UserFriendsService {
+public class UserServiceInMemory implements UserService {
     private final InMemoryUserStorage inMemoryUserStorage;
 
     public void addToFriends(Integer userId, Integer friendId) {
@@ -23,7 +22,7 @@ public class UserFriendsServiceInMemory implements UserFriendsService {
             throw new NotFoundException("Пользователь не найден в базе");
         }
     }
-    @Override
+
     public void deleteFromFriends(Integer userId, Integer friendId) {
         if (getUserById(userId) != null && getUserById(friendId) != null) {
             getUserById(userId).deleteFriend(friendId);

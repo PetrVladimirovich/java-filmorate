@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dao.impl.UserDbFriendsService;
-import ru.yandex.practicum.filmorate.dao.impl.UserDbStorage;
+import ru.yandex.practicum.filmorate.dao.FriendDao;
+import ru.yandex.practicum.filmorate.dao.impl.UserDbService;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserFriendsService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
@@ -23,8 +22,9 @@ import static ru.yandex.practicum.filmorate.Constants.requestBodyValidationLogs;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final UserDbFriendsService userFriendsService;
+    private final UserDbService userService;
     private final UserStorage userStorage;
+    private final FriendDao friendDao;
 
     @GetMapping
     public List<User> allUsers() {
@@ -42,15 +42,15 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public Set<User> getFriendsOfUser(@PathVariable int id) {
-        return userFriendsService.friendsOfUser(id);
+        return userService.friendsOfUser(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     @ResponseStatus(HttpStatus.OK)
     public Set<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
         log.info("Общие друзья пользователей с ID: {} и ID: {} -> {}"
-                , id, otherId, userFriendsService.commonFriends(id, otherId));
-        return userFriendsService.commonFriends(id, otherId);
+                , id, otherId, userService.commonFriends(id, otherId));
+        return userService.commonFriends(id, otherId);
     }
 
     @PostMapping
@@ -71,12 +71,12 @@ public class UserController {
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addToFriends(@PathVariable int id, @PathVariable int friendId) {
-        userFriendsService.addToFriends(id, friendId);
+        friendDao.addToFriends(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void removeFromFriends(@PathVariable int id, @PathVariable int friendId) {
         log.info("Пользователи с ID: {} и ID: {} удалены друг у друга из друзей", id, friendId);
-        userFriendsService.deleteFromFriends(id, friendId);
+        friendDao.deleteFromFriends(id, friendId);
     }
 }

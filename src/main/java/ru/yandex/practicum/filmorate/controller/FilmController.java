@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dao.LikeDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -25,6 +26,7 @@ public class FilmController {
 
     private final FilmService filmService;
     private final FilmStorage filmStorage;
+    private final LikeDao likeDao;
 
     @GetMapping
     public List<Film> allFilms() {
@@ -64,12 +66,12 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
-        filmService.addLike(userId, id);
+        likeDao.addLike(userId, id);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
-        filmService.deleteLike(userId, id);
+        likeDao.deleteLike(userId, id);
     }
 }

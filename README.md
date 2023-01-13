@@ -2,6 +2,7 @@
 Template repository for Filmorate project.
 
 # ER-diagram filmorate project
+[Диаграмма на сайте quickdatabasediagrams.com](https://app.quickdatabasediagrams.com/#/d/JM4tuf)
 
 ![This is an image](https://github.com/PetrVladimirovich/java-filmorate/blob/b5861119769f538cee28d3b09eaa52aca70cb8e8/ER%20diagram%20filmorate.png)
 

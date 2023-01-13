@@ -5,12 +5,7 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Set;
 @Service
-public interface UserFriendsService {
-    void addToFriends(Integer userId, Integer friendId);
-
-    void deleteFromFriends(Integer userId, Integer friendId);
-
+public interface UserService {
     Set<User> friendsOfUser(Integer userId);
-
     Set<User> commonFriends(Integer userId, Integer otherUserId);
 }

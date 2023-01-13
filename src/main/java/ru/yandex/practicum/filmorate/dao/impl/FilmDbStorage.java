@@ -26,7 +26,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final MpaDbService mpaDbService;
+    private final MpaDbStorage mpaDbStorage;
+    private final GenreDbStorage genreDbStorage;
     private final GenreDbService genreDbService;
 
     @Override
@@ -133,8 +134,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Mpa mpaOption(int id) {
-        if (mpaDbService.mpaById(id).isPresent()) {
-            return mpaDbService.mpaById(id).get();
+        if (mpaDbStorage.mpaById(id).isPresent()) {
+            return mpaDbStorage.mpaById(id).get();
         }else {
             return null;
         }
