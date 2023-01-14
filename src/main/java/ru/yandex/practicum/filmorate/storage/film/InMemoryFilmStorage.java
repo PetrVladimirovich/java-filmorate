@@ -5,30 +5,30 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@Component
+@Component("InMemoryFilmStorage")
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
 
+    private static Integer id = 1;
     @Override
-    public void add(Film film) {
+    public Film add(Film film) {
+        film.setId(id++);
         films.put(film.getId(), film);
         log.info("В хранилище добавлен фильм '{}' с id: '{}'", film.getName(), film.getId());
+        return film;
     }
 
     @Override
-    public void delete(int id) {
-        Film film = films.remove(id);
+    public void delete(Film film) {
+        films.remove(film.getId());
         log.info("Из хранилища удалён фильм '{}' с id: '{}'", film.getName(), film.getId());
     }
 
     @Override
-    public void update(Film film) {
+    public Film update(Film film) {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
             log.info("В хранилище обновлён фильм '{}' с id: '{}'", film.getName(), film.getId());
@@ -36,14 +36,16 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.error("В хранилище не было фильма '{}' с id: '{}'", film.getName(), film.getId());
             throw new NotFoundException("Такого фильма нету!");
         }
+
+        return film;
     }
 
     @Override
-    public Film getFilmById(int id) {
+    public Optional<Film> getFilmById(int id) {
         if (films.containsKey(id)) {
-            return films.get(id);
+            return Optional.of(films.get(id));
         }else {
-            throw new NotFoundException("Фильма с ID: " + id + " нету в базе!");
+            return Optional.empty();
         }
     }
 
